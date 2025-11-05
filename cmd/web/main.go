@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/alexedwards/scs/v2"
-	"github.com/htet-29/bookings/pkg/config"
-	"github.com/htet-29/bookings/pkg/handlers"
-	"github.com/htet-29/bookings/pkg/render"
+	"github.com/htet-29/bookings/internal/config"
+	"github.com/htet-29/bookings/internal/handlers"
+	"github.com/htet-29/bookings/internal/render"
 )
 
 var portNumber = "localhost:8080"
