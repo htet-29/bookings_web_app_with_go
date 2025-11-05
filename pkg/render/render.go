@@ -10,6 +10,7 @@ import (
 
 	"github.com/htet-29/bookings/pkg/config"
 	"github.com/htet-29/bookings/pkg/models"
+	"github.com/justinas/nosurf"
 )
 
 var functions = template.FuncMap{}
@@ -22,6 +23,7 @@ func NewTemplates(a *config.AppConfig) {
 }
 
 func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateData {
+	td.CSRFToken = nosurf.Token(r)
 	return td
 }
 

@@ -2,44 +2,44 @@
 
 {{ define "content"}}
 <div class="container">
-            <div class="row">
-                <div class="col-12 col-md-6 mx-auto">
-                    <img
-                        src="/static/images/generals-quarters.png"
-                        class="img-fluid img-thumbnail"
-                        alt="room image"
-                    />
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <h1 class="text-center mt-4">General's Quarters</h1>
-                    <p>
-                        Lorem, ipsum dolor sit amet consectetur adipisicing
-                        elit. Veritatis hic distinctio, quaerat rem alias vitae
-                        possimus iure saepe aperiam voluptatibus corrupti quae
-                        accusantium, dignissimos molestias quidem doloribus nam
-                        asperiores sequi?Lorem, ipsum dolor sit amet consectetur
-                        adipisicing elit. Veritatis hic distinctio, quaerat rem
-                        alias vitae possimus iure saepe aperiam voluptatibus
-                        corrupti quae accusanitium, dignissimos molestias quidem
-                        doloribus nam asperiores sequi?Lorem, ipsum dolor sit
-                        amet consectetur adipisicing elit. Veritatis hic
-                        distinctio, quaerat rem alias vitae possimus iure saepe
-                        aperiam voluptatibus corrupti quae accusantium,
-                        dignissimos molestias quidem doloribus nam asperiores
-                        sequi?
-                    </p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col text-center">
-                    <a href="#!" id="check-availability-button" class="btn btn-success"
-                        >Check Availability</a
-                    >
-                </div>
-            </div>
+    <div class="row">
+        <div class="col-12 col-md-6 mx-auto">
+            <img
+                src="/static/images/generals-quarters.png"
+                class="img-fluid img-thumbnail"
+                alt="room image"
+            />
         </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h1 class="text-center mt-4">General's Quarters</h1>
+            <p>
+                Lorem, ipsum dolor sit amet consectetur adipisicing
+                elit. Veritatis hic distinctio, quaerat rem alias vitae
+                possimus iure saepe aperiam voluptatibus corrupti quae
+                accusantium, dignissimos molestias quidem doloribus nam
+                asperiores sequi?Lorem, ipsum dolor sit amet consectetur
+                adipisicing elit. Veritatis hic distinctio, quaerat rem
+                alias vitae possimus iure saepe aperiam voluptatibus
+                corrupti quae accusanitium, dignissimos molestias quidem
+                doloribus nam asperiores sequi?Lorem, ipsum dolor sit
+                amet consectetur adipisicing elit. Veritatis hic
+                distinctio, quaerat rem alias vitae possimus iure saepe
+                aperiam voluptatibus corrupti quae accusantium,
+                dignissimos molestias quidem doloribus nam asperiores
+                sequi?
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-center">
+            <a href="#!" id="check-availability-button" class="btn btn-success"
+                >Check Availability</a
+            >
+        </div>
+    </div>
+</div>
 {{ end }}
 
 {{ define "js"}}
@@ -47,37 +47,76 @@
 <script>
 document.getElementById("check-availability-button").addEventListener("click", () => {
   let html = `
-                      <form id="check-availability-form" action="" method="post" novalidate class="needs-validation">
-                        <div class="row">
-                          <div id="reservation-dates-modal" class="row">
-                              <div class="col">
-                                    <input
-                                      disabled
-                                        type="text"
-                                        class="form-control"
-                                        name="start"
-                                        required
-                                        placeholder="Arrival "
-                                        id="start"
-                                        autocomplete="off"
-                                    />
-                                </div>
-                                <div class="col">
-                                    <input
-                                      disabled
-                                        type="text"
-                                        class="form-control"
-                                        name="end"
-                                        required
-                                        placeholder="Departure Date"
-                                        id="end"
-                                        autocomplete="off"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                      </form>`;
-  attention.custom({ msg: html, title: "Choose your dates" });
+    <form id="check-availability-form" action="" method="post" novalidate class="needs-validation">
+      <div class="row">
+        <div id="reservation-dates-modal" class="row">
+            <div class="col">
+                  <input
+                    disabled
+                      type="text"
+                      class="form-control"
+                      name="start"
+                      required
+                      placeholder="Arrival "
+                      id="start"
+                      autocomplete="off"
+                  />
+            </div>
+            <div class="col">
+              <input
+                disabled
+                  type="text"
+                  class="form-control"
+                  name="end"
+                  required
+                  placeholder="Departure Date"
+                  id="end"
+                  autocomplete="off"
+              />
+            </div>
+        </div>
+      </div>
+    </form>`;
+
+    attention.custom({
+      msg: html,
+      title: "Choose your dates",
+      willOpen: () => {
+          const ele = document.getElementById(
+              "reservation-dates-modal",
+          );
+          const rp = new DateRangePicker(ele, {
+              format: "yyyy-mm-dd",
+              showOnFocus: true,
+          });
+      },
+      didOpen: () => {
+          document
+              .getElementById("start")
+              .removeAttribute("disabled");
+          document
+              .getElementById("end")
+              .removeAttribute("disabled");
+      },
+      callback: function(result) {
+        console.log("called")
+
+        let form = document.getElementById("check-availability-form");
+        let formData = new FormData(form);
+        formData.append("csrf_token", "{{ .CSRFToken }}")
+
+        fetch("/search-availability-json", {
+          method: "post",
+          body: formData,
+        })
+          .then(res => res.json())
+          .then(data => {
+            console.log(data)
+            console.log(data.ok)
+            console.log(data.message)
+          })
+      }
+    })
 });
 </script>
 

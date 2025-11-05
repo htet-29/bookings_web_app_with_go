@@ -11,6 +11,7 @@
                         method="POST"
                         novalidate
                     >
+                        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}" />
                         <div class="row">
                             <div class="col">
                                 <div id="reservation-dates" class="row">
